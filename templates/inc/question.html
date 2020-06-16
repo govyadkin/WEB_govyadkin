@@ -1,0 +1,37 @@
+{% load static %}
+<div class="card p-3 m-2">
+    <a href="{% url 'question' qid=question.id %}"><big><big>{{ question.title }}</big></big></a>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-1 mx-0 p-0">
+                <div class="row justify-content-center">
+                    <img src="{% static 'img/507-64x64.jpg' %}" width="64" height="64"
+                         class=" img-thumbnail">
+                    <a href="#">{{question.asking.nick}}</a>
+                </div>
+
+
+                <div class="row justify-content-center">
+                    <button type="button" class="btn btn-default p-1" aria-label="Left Align">
+                        <span class="oi oi-chevron-top" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default p-1" aria-label="Left Align">
+                        <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+                    </button>
+                </div>
+
+                <div class="row justify-content-center">
+                    <h5>{{question.ratin}}</h5>
+                </div>
+            </div>
+
+            <div class="col-10">
+                <p class="card-text">{{question.text}}</p>
+                <a href="{% url 'question' qid=question.id %}">Ответы({{question.answers_count}})</a>
+                Тэги: {%for tag in question.tags.all%} <a href="{% url 'tag' tag_name=tag.text%}"> {{tag.text}} </a> {%endfor%}
+                <small><a class="text-secondary d-flex justify-content-end">{{question.date}}</a></small>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-5">
+        {% if hot %}
+        <h3>Популярное</h3>
+        {% else %}
+        <h3>Новое</h3>
+        {% endif %}
+    </div>
+    <div class="col-4">
+        {% if hot %}
+        <a href="{% url 'index'%}">Новое</a>
+        {% else %}
+        <a href="{% url 'hot'%}">Популярное</a>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="body">
+    {% for question in questions %}
+    {% include 'inc/question.html' %}
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block pagination %}
+{% include 'inc/pagin.html' %}
+{% endblock pagination %}

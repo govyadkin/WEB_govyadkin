@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h3>Настройки NickName</h3>
+<form class="needs-validation mt-4" novalidate>
+    <div class="form-group">
+        <label for="login">Логин</label>
+        <input type="text" class="form-control" id="login" placeholder="Новый логин" required>
+    </div>
+    <div class="form-group">
+        <label for="nick">Ник</label>
+        <input type="text" class="form-control" id="nick" placeholder="Новый Ник" required>
+    </div>
+
+    <div class="form-group">
+        <label for="exampleInputEmail1">Email</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+               placeholder="Новый email">
+    </div>
+    <div class="media">
+        <img src="{% static 'img/507-64x64.jpg' %}" width="70" height="70" class="img-thumbnail mr-3">
+        <div class="media-body">
+            <form>
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">Выбрать новую аватарку</label>
+                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+
+{% endblock content %}

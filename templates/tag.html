@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <h3>Тег: {{tag}}</h3>
+</div>
+
+<div class="body">
+    {% for question in questions %}
+      {% include 'inc/question.html' %}
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block pagination %}
+    {% include 'inc/pagin.html' %}
+{% endblock pagination %}

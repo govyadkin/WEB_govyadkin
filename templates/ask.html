@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Новый вопрос</h3>
+
+<form class="needs-validation" novalidate>
+    <div class="form-group row">
+        <label class="col-sm-3 mr-1 col-form-label">Заголовок</label>
+        <div class="col-sm-9">
+            <input class="form-control" id="exampleInputTitle1" placeholder="Enter title"
+                   maxlength="100" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Содержание</label>
+        <div class="col-sm-9">
+            <textarea class="form-control" id="exampleInputQuestion1" rows="4"
+                      placeholder="Enter question"
+                      maxlength="1000" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Тэги</label>
+        <div class="col-sm-9">
+            <input class="form-control" id="exampleInputTag1" placeholder="Enter tags" maxlength="100"
+                   required>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mx-3">Задать вопрос</button>
+</form>
+
+{% endblock content %}

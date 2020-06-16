@@ -1,0 +1,26 @@
+{% load static %}
+<div class="container-fluid">
+    <nav class="row navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="col-3 navbar-brand" href="{% url 'index'%}">Вопросник</a>
+        <div class="col-9 d-flex justify-content-end">
+            <form class="form-inline">
+                <input class="form-control mr-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-secondary" type="submit">Найти</button>
+            </form>
+            <form action="{% url 'ask' %}">
+                <button type="submit" class="btn btn-primary ml-3">Спросить</button>
+            </form>
+
+            <div class="media ml-3 my-0">
+                <img src="{% static 'img/507-64x64.jpg' %}" width="40" height="40" class=" img-thumbnail">
+                <h6 class="mt-0 ml-2 text-light">NickName</h6>
+            </div>
+            <form action="{% url 'settings' %}">
+                        <button type="submit" class="btn btn-primary ml-2">Настройки</button>
+                    </form>
+            <form>
+                <button type="submit" class="btn btn-primary ml-3">Выйти</button>
+            </form>
+        </div>
+    </nav>
+</div>
