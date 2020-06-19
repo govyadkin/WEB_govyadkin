@@ -1,74 +1,67 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User, UserManager
+from django.db.models import Subquery, OuterRef, Count
 
 import datetime
 
+
 class QManager(models.Manager):
     def sortByDate(self):
-        objects_list = []
-        questions = self.order_by('-date')
-        for question in questions:
-            print(question.asking.avatar.url)
-            list_element = question
-            list_element.answers_count = Answer.objects.filter(question_id=question.id).count()
-            objects_list.append(list_element)
-        return objects_list
+        aq = Subquery(
+            Answer.objects.filter(question_id=OuterRef("pk")).values('question_id').annotate(c=Count("*")).values('c'))
+        questions = self.order_by('-date').annotate(answers_count=aq)
+        return questions
 
     def bestQuestions(self):
-        objects_list = []
-        questions = self.order_by('-ratin')
-        for question in questions:
-            list_element = question
-            list_element.answers_count = Answer.objects.filter(question_id=question.id).count()
-            objects_list.append(list_element)
-        return objects_list
+        aq = Subquery(
+            Answer.objects.filter(question_id=OuterRef("pk")).values('question_id').annotate(c=Count("*")).values('c'))
+        questions = self.order_by('-ratin').annotate(answers_count=aq)
+        return questions
 
     def questionsByTag(self, tag):
-        from django.db import connection
-        cursor = connection.cursor()
-        cursor.execute("""
-                    SELECT question_tags.question_id, tag.text
-                    FROM app_question_tags question_tags, app_tag tag
-                    WHERE tag.id = question_tags.tag_id AND tag.text = '""" + tag + """'
-                    ORDER BY tag.id DESC""")
-        objects_list = []
-        for row in cursor.fetchall()[:5]:
-            question = Question.objects.get(pk=row[0])
-            list_element = question
-            list_element.answers_count = Answer.objects.filter(question_id=question.id).count()
-            objects_list.append(list_element)
-        return objects_list
+        aq = Subquery(
+            Answer.objects.filter(question_id=OuterRef("pk")).values('question_id').annotate(c=Count("*")).values('c'))
+        tag_id = Tag.objects.filter(text=tag)[0].id
+        questions = self.filter(tags=tag_id).annotate(answers_count=aq)
+        return questions
 
     def answersOnQuestion(self, id):
         return Answer.objects.filter(question_id=id)
 
 
-class User(models.Model):
-    login = models.CharField(max_length=100)
-    nick = models.CharField(max_length=100)
-    email = models.EmailField()
-    password = models.CharField(max_length=20)
+class myUManager(UserManager):
+    def best(self, n=5):
+        return myUser.objects.annotate(active=models.Count('asking')).order_by("-active")[:n]
+
+
+class TManager(models.Manager):
+    def best(self, n=5):
+        return Tag.objects.annotate(active=models.Count('tagn')).order_by("-active")[:n]
+
+
+class myUser(User):
     avatar = models.FileField(upload_to='uploads/', default='IMG_4016.jpg')
-    date = models.DateTimeField(auto_now=True)
+    objects = myUManager()
 
 
 class Tag(models.Model):
     text = models.CharField(max_length=100)
+    objects = TManager()
 
 
 class Question(models.Model):
-    asking = models.ForeignKey(User, on_delete=models.PROTECT)
+    asking = models.ForeignKey(myUser, on_delete=models.CASCADE, related_name='asking')
     title = models.CharField(max_length=100)
     text = models.CharField(max_length=1000)
     ratin = models.IntegerField()
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, related_name='tagn')
     date = models.DateTimeField(auto_now=True)
     objects = QManager()
 
 
 class Answer(models.Model):
-    answerer = models.ForeignKey(User, on_delete=models.PROTECT)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    answerer = models.ForeignKey(myUser, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     # rating = models.IntegerField()
     text = models.CharField(max_length=200)
     correct = models.BooleanField(default=False)
@@ -76,12 +69,12 @@ class Answer(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    user = models.ForeignKey(myUser, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
 
 
 class Dislike(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    user = models.ForeignKey(myUser, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)

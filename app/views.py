@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
+
 from app import forms
 from app import models
-from .models import Question, Answer, User, Tag
+
+from .models import Question, Answer, myUser, Tag
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from faker import Faker
@@ -37,15 +39,17 @@ def index(request):
         'hot': False,
         'questions': question_page,
         'page': page,
+        'best_user': myUser.objects.best(),
+        'best_tag': Tag.objects.best(),
     })
 
 
-def index2(request):
+def fake(request):
     Answer.objects.all().delete()
     Question.objects.all().delete()
     Tag.objects.all().delete()
-    User.objects.all().delete()
-    fake = Faker()
+    myUser.objects.all().delete()
+    faker = Faker()
     t = [Tag(text="Iг"),
          Tag(text="IMGTU"),
          Tag(text="MGTU"),
@@ -54,22 +58,22 @@ def index2(request):
          Tag(text="IU")]
     for uu in t:
         uu.save()
-    u = [User(login="aa", nick=fake.name(), email="f@gmail.com", password="12345678"),
-         User(login="aa", nick=fake.name(), email="f@gmail.com", password="12345678"),
-         User(login="aa", nick=fake.name(), email="f@gmail.com", password="12345678"),
-         User(login="aa", nick=fake.name(), email="f@gmail.com", password="12345678"),
-         User(login="aa", nick=fake.name(), email="f@gmail.com", password="12345678")]
+    u = [myUser(username=faker.name(), email="f@gmail.com", password="12345678"),
+         myUser(username=faker.name(), email="f@gmail.com", password="12345678"),
+         myUser(username=faker.name(), email="f@gmail.com", password="12345678"),
+         myUser(username=faker.name(), email="f@gmail.com", password="12345678"),
+         myUser(username=faker.name(), email="f@gmail.com", password="12345678")]
     for uu in u:
         uu.save()
     for i in range(32):
-        q1 = Question(asking=u[random.randint(0, 4)], title=fake.text(100), text=fake.text(500),
+        q1 = Question(asking=u[random.randint(0, 4)], title=faker.text(100), text=faker.text(500),
                       ratin=random.randint(0, 100))
         q1.save()
         q1.tags.add(t[random.randint(0, 2)])
         q1.tags.add(t[random.randint(3, 5)])
         q1.save()
         for j in range(random.randint(0, 10)):
-            a1 = Answer(answerer=u[random.randint(0, 4)], question=q1, text=fake.text(50))
+            a1 = Answer(answerer=u[random.randint(0, 4)], question=q1, text=faker.text(50))
             a1.save()
 
 
@@ -83,7 +87,10 @@ def signup(request):
 
 @login_required
 def ask(request):
-    return render(request, 'ask.html', {})
+    return render(request, 'ask.html', {
+        'best_user': myUser.objects.best(),
+        'best_tag': Tag.objects.best(),
+    })
 
 
 @login_required
@@ -98,6 +105,8 @@ def hot(request):
         'hot': True,
         'questions': question_page,
         'page': page,
+        'best_user': myUser.objects.best(),
+        'best_tag': Tag.objects.best(),
     })
 
 
@@ -111,6 +120,8 @@ def question(request, qid):
         'question': quest,
         'answers': answers_page,
         'page': page,
+        'best_user': myUser.objects.best(),
+        'best_tag': Tag.objects.best(),
     })
 
 
@@ -121,4 +132,6 @@ def tag(request, tag_name):
         'tag': tag_name,
         'questions': question_page,
         'page': page,
+        'best_user': myUser.objects.best(),
+        'best_tag': Tag.objects.best(),
     })

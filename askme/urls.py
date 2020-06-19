@@ -15,5 +15,5 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('settings/', views.settings, name='settings'),
     path('admin/', admin.site.urls),
-    path('f/', views.index2), # Faker data
+    path('f/', views.fake), # Faker data
 ]
